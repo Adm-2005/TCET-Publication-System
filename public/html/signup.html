@@ -3,42 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup</title>
-    <link href=
-    "https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
-              rel="stylesheet">
+    <title>Registration Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@100;400;700&family=Poppins:wght@400;600;700&display=swap');
+
+        * {
+            font-family: 'Noto Sans', sans-serif;
+        }
+
+        .captcha-container .image {
+            user-select: none;
+            text-decoration: line-through;
+            font-style: italic;
+            font-size: 1.5rem;
+            color: red;
+            border: 2px solid red;
+        }
+    </style>
 </head>
-<body>
-    <div class="flex my-auto flex-col justify-center items-center">
+<body class="bg-gray-800 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-gray-900 text-white rounded-lg shadow-lg p-8 max-w-md w-full">
+        <h2 class="text-teal-400 text-3xl font-semibold mb-2 text-center relative inline-block">
+            Register
+            <span class="absolute animate-ping inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+        </h2>
+        <p class="text-gray-400 text-center mb-6">Sign up now and get full access to our app.</p>
         
-        <div class="w-full max-w-xs">
-            <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" id="signupForm">
-              <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                  Username
-                </label>
-                <input required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username">
-              </div>
-              <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                  Password
-                </label>
-                <input required class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" >
-                
-              </div>
-              <div class="flex items-center justify-between">
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"  type="submit">
-                 Signup
+        <form id="signupForm" class="space-y-4" autocomplete="off">
+            <div class="flex gap-4">
+                <input type="text" id="firstName" name="firstName" placeholder="First Name" required class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg p-3 outline-none focus:ring-2 focus:ring-teal-400">
+                <input type="text" id="lastName" name="lastName" placeholder="Last Name" required class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg p-3 outline-none focus:ring-2 focus:ring-teal-400">
+            </div>
+            <input type="text" id="username" name="username" placeholder="Username" required class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg p-3 outline-none focus:ring-2 focus:ring-teal-400">
+            <input type="email" id="email" name="email" placeholder="Email" required class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg p-3 outline-none focus:ring-2 focus:ring-teal-400">
+            <input type="text" id="branch" name="branch" placeholder="Branch" required class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg p-3 outline-none focus:ring-2 focus:ring-teal-400">
+            
+            <div class="relative">
+                <input type="password" id="password" name="password" placeholder="Password" required class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg p-3 outline-none focus:ring-2 focus:ring-teal-400">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg p-3 outline-none focus:ring-2 focus:ring-teal-400 mt-4">
+                <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-3 text-gray-400">
+                    <i id="togglePasswordIcon" class="fas fa-eye"></i>
                 </button>
-                <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="login.html">
-                 Login
-                </a>
-              </div>
-            </form>
-           
-          </div>
-        <p id="message"></p>
+            </div>
+
+            <div class="flex items-center gap-4 captcha-container">
+                <input type="text" placeholder="Captcha Code" required aria-label="Captcha Code" id="captcha-input" class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg p-3 outline-none focus:ring-2 focus:ring-teal-400">
+                <div onclick="generateCaptcha()" class="text-teal-400 cursor-pointer">
+                    <i class="fas fa-sync fa-lg"></i>
+                </div>
+                <div id="captcha-image" class="image w-24 h-10 flex items-center justify-center"></div>
+            </div>
+
+            <button type="submit" class="w-full bg-teal-400 text-white rounded-lg p-3 mt-4 hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-400">Submit</button>
+            <p id="message" class="text-center text-gray-400 mt-4"></p>
+            <p class="text-center text-gray-400 mt-4">Already have an account? 
+                <a href="#" class="text-teal-400">Sign In</a>
+            </p>
+        </form>
     </div>
-    <script src="scripts.js"></script>
+
+    <script>
+        function generateCaptcha() {
+            const captchaInput = document.getElementById("captcha-input");
+            const captchaImage = document.getElementById("captcha-image");
+            captchaInput.value = "";
+
+            const randomChar = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let uniqueChar = "";
+
+            for (let i = 0; i < 5; i++) {
+                uniqueChar += randomChar.charAt(Math.floor(Math.random() * randomChar.length));
+            }
+
+            captchaImage.textContent = uniqueChar;
+        }
+
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const confirmPasswordField = document.getElementById('confirmPassword');
+            const icon = document.getElementById('togglePasswordIcon');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                confirmPasswordField.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                confirmPasswordField.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Generate captcha on page load
+        window.onload = generateCaptcha;
+
+        // Handle form submission
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            console.log("Form submission started");
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const branch = document.getElementById('branch').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const captchaInput = document.getElementById('captcha-input').value;
+            const captchaImage = document.getElementById('captcha-image').textContent;
+
+            console.log({ firstName, lastName, username, email, branch, password, confirmPassword, captchaInput, captchaImage });
+
+            if (captchaInput !== captchaImage) {
+                document.getElementById('message').style.color = 'red';
+                document.getElementById('message').textContent = 'Captcha does not match. Please try again.';
+                generateCaptcha();
+                return;
+            }
+
+            try {
+                const response = await fetch('signup.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ firstName, lastName, username, email, branch, password, confirmPassword })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+
+                console.log(result);
+
+                const messageElement = document.getElementById('message');
+                if (result.success) {
+                    messageElement.style.color = 'green';
+                    messageElement.textContent = 'Signup successful! Redirecting...';
+                    setTimeout(() => {
+                        window.location.href = 'faculty-dashboard.html'; // Redirect to faculty dashboard
+                    }, 2000); // Delay to allow the user to see the success message
+                } else {
+                    messageElement.style.color = 'red';
+                    messageElement.textContent = 'Signup failed: ' + result.message;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                const messageElement = document.getElementById('message');
+                messageElement.style.color = 'red';
+                messageElement.textContent = 'An error occurred. Please try again.';
+            }
+        });
+    </script>
 </body>
 </html>

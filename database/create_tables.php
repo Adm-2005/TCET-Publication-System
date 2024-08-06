@@ -1,6 +1,5 @@
 <?php
-require 'db_connection.php';  // Ensure you have your database connection here
-
+require 'db_connection.php';  
 
 $sql = "CREATE TABLE IF NOT EXISTS papers (
     id INT AUTO_INCREMENT PRIMARY KEY,

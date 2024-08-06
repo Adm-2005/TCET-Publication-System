@@ -2,7 +2,7 @@
 require 'vendor/autoload.php';
 use \Firebase\JWT\JWT;
 use \Firebase\JWT\Key;
-require 'db_connection.php';  // Ensure you have your database connection here
+require 'db_connection.php';  
 
 header('Content-Type: application/json');
 
@@ -19,8 +19,7 @@ if ($jwt) {
 
         
         $userId = $decoded->sub;
-
-        // Retrieve user details from the database
+        
         $query = $conn->prepare("SELECT username,role FROM users WHERE id = ?");
         $query->bind_param('i', $userId);
         $query->execute();
