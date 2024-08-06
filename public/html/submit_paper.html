@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    
+    <div class="p-5 flex flex-col justify-center items-center">
+        <h3 class="text-3xl font-bold text-blue-300">Submit a New Paper</h3>
+    <form id="submitPaperForm" class="flex gap-2 flex-col bg-gray-900 p-6 rounded-lg w-2/6">
+        <div>
+            <p class="text-xl text-white">Title</p>
+            <input class="w-full mt-1 rounded-lg text-xl p-3 text-xl" type="text" id="title" name="title" required>
+        </div>
+        
+        <div>
+            <p class="text-xl text-white">Description</p>
+            <input class="w-full mt-1 rounded-lg text-xl p-3 text-xl" id="abstract" name="abstract" required>
+        </div>
+        <div>
+            <p class="text-xl text-white">Status</p>
+            <select class="w-full h-12 mt-1 text-xl rounded-lg p-2" name="" id="status">
+                <option value="Prepared">Prepared</option>
+                <option value="Uploaded">Uploaded</option>
+                <option value="Published">Published</option>
+               
+            </select>
+        </div>
+        <button class="bg-blue-300 w-48 p-2 rounded-md mx-auto mt-3" type="submit">Submit</button>
+    </form>
+    </div>
+    <script>
+         async function submitPaper(event) {
+            event.preventDefault();
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const title = document.getElementById('title').value;
+            const abstract = document.getElementById('abstract').value;
+            const status = document.getElementById('status').value;
+            console.log(status)
+            const response = await fetch('submit_paper.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ title, abstract , status })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert('Paper submitted successfully');
+                fetchPapers();  // Refresh the papers list
+            } else {
+                alert('Failed to submit paper: ' + result.message);
+            }
+        }
+
+        document.getElementById('submitPaperForm').addEventListener('submit', submitPaper);
+    </script>
+</body>
+</html>
